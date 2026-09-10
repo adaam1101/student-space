@@ -1,0 +1,10 @@
+{
+  "expo": {
+    "name": "Student Space",
+    "slug": "student-space-ensb",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "android": { "package": "dz.ensb.studentSpace" }
+  }
+}
