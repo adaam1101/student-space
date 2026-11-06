@@ -1,0 +1,1398 @@
+// ============================================================================
+// ADAM AMEYOUD — ENGLISH LANGUAGE ASSESSMENT
+// Initial Seed Data: B1 Final Examination, Teacher Account & Initial Students
+// ============================================================================
+
+import { hashSeedSecret } from "./security";
+import {
+  DatabaseSchema,
+  ExamRecord,
+  ExamSectionRecord,
+  ProfileRecord,
+  QuestionRecord,
+  StudentRecord,
+} from "./types";
+
+export const INITIAL_TEACHER_ID = "00000000-0000-0000-0000-000000000001";
+export const INITIAL_B1_EXAM_ID = "10000000-0000-0000-0000-000000000001";
+
+export const SEC_GRAMMAR_ID = "20000000-0000-0000-0000-000000000001";
+export const SEC_READING_ID = "20000000-0000-0000-0000-000000000002";
+export const SEC_WRITING_ID = "20000000-0000-0000-0000-000000000003";
+export const SEC_BONUS_ID = "20000000-0000-0000-0000-000000000004";
+
+export const READING_PASSAGE_TITLE = "THE PRICE OF CONVENIENCE";
+
+export const READING_PASSAGE_TEXT = `Modern society has become increasingly dependent on convenience. From online shopping and instant communication to artificial intelligence and automated services, technology has transformed the way people live, work and interact. Tasks that once required considerable time and effort can now be completed within seconds. However, while these developments have undoubtedly improved certain aspects of human life, they have also raised important questions about the consequences of our growing dependence on technology.
+
+One of the most noticeable changes concerns the way people acquire knowledge. In the past, learning often required patience, extensive reading and independent investigation. Today, information is immediately available through search engines and digital platforms. Although this accessibility has made education more inclusive, it has also encouraged some individuals to accept information without questioning its accuracy. As a result, having access to information does not necessarily mean possessing genuine knowledge.
+
+Another concern is the effect of convenience on human relationships. People can communicate with friends and relatives regardless of geographical distance. Nevertheless, digital communication sometimes replaces meaningful face-to-face interaction. Individuals may spend hours exchanging messages while struggling to maintain deep conversations in real life. Paradoxically, a society that is more connected than ever may also experience increasing feelings of isolation.
+
+Furthermore, the widespread use of artificial intelligence has generated debate about human abilities. While these systems can perform complicated tasks efficiently, excessive reliance on them may weaken certain intellectual skills if individuals stop practising independent thinking. Rather than using technology as a substitute for human judgement, people should consider it a tool that supports their abilities.
+
+Ultimately, convenience itself is neither entirely beneficial nor harmful. Its value depends on how responsibly individuals use it. Progress should not be measured exclusively by the speed at which tasks are completed, but also by the quality of human thinking, relationships and decisions. Perhaps the most important question is not how much technology can do for us, but how much of our humanity we are willing to preserve while using it.`;
+
+export function buildInitialDatabase(): DatabaseSchema {
+  const now = new Date().toISOString();
+  const oneWeekAgo = new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString();
+  const sixMonthsAhead = new Date(
+    Date.now() + 180 * 24 * 3600 * 1000
+  ).toISOString();
+
+  // 1. Profiles (Examiner + Only the 2 Candidates: hanine2026 & ritedj2026)
+  const profiles: ProfileRecord[] = [
+    {
+      id: INITIAL_TEACHER_ID,
+      full_name: "Adam Ameyoud",
+      email: "adamameyoud",
+      password_hash: hashSeedSecret("adamadam"),
+      role: "teacher",
+      created_at: oneWeekAgo,
+    },
+    {
+      id: "00000000-0000-0000-0000-000000000101",
+      full_name: "Hanine",
+      email: "hanine2026",
+      password_hash: hashSeedSecret("haninehanine"),
+      role: "student",
+      created_at: oneWeekAgo,
+    },
+    {
+      id: "00000000-0000-0000-0000-000000000102",
+      full_name: "Ritedj",
+      email: "ritedj2026",
+      password_hash: hashSeedSecret("ritedjritedj"),
+      role: "student",
+      created_at: oneWeekAgo,
+    },
+  ];
+
+  // 2. Students (Only hanine2026 & ritedj2026)
+  const students: StudentRecord[] = [
+    {
+      id: "30000000-0000-0000-0000-000000000101",
+      profile_id: "00000000-0000-0000-0000-000000000101",
+      student_number: "hanine2026",
+      group_name: "Group B1",
+      is_active: true,
+      created_at: oneWeekAgo,
+    },
+    {
+      id: "30000000-0000-0000-0000-000000000102",
+      profile_id: "00000000-0000-0000-0000-000000000102",
+      student_number: "ritedj2026",
+      group_name: "Group B1",
+      is_active: true,
+      created_at: oneWeekAgo,
+    },
+  ];
+
+  // 3. Initial B1 Final Examination
+  const exams: ExamRecord[] = [
+    {
+      id: INITIAL_B1_EXAM_ID,
+      code: "B1-FINAL-2026",
+      title: "B1 – FINAL ENGLISH EXAMINATION",
+      subtitle: "Strong B1, approaching B2",
+      description:
+        "Official Final Assessment in English Language by Adam Ameyoud. Evaluates Grammar Accuracy & Range (50 marks), Reading Comprehension & Critical Interpretation (25 marks), Academic/Reflective Essay Writing (25 marks), and Bonus Critical Vocabulary (2 marks).",
+      level: "B1",
+      duration_minutes: 150,
+      access_code_hash: hashSeedSecret("B1FINAL2026"),
+      access_code_hint: "B1FINAL2026",
+      start_time: oneWeekAgo,
+      end_time: sixMonthsAhead,
+      max_attempts: 1,
+      status: "active",
+      total_marks: 100,
+      bonus_marks: 2,
+      reading_passage_title: READING_PASSAGE_TITLE,
+      reading_passage_text: READING_PASSAGE_TEXT,
+      created_at: oneWeekAgo,
+    },
+  ];
+
+  // 4. Exam Sections
+  const exam_sections: ExamSectionRecord[] = [
+    {
+      id: SEC_GRAMMAR_ID,
+      exam_id: INITIAL_B1_EXAM_ID,
+      title: "Part One: Grammar",
+      description:
+        "Exercise 1: Multiple Choice (10 marks) • Exercise 2: Sentence Transformation (20 marks) • Exercise 3: Error Correction (10 marks) • Exercise 4: Complete the Sentences (10 marks)",
+      section_order: 1,
+      max_marks: 50,
+    },
+    {
+      id: SEC_READING_ID,
+      exam_id: INITIAL_B1_EXAM_ID,
+      title: "Part Two: Reading Comprehension",
+      description:
+        "Passage: THE PRICE OF CONVENIENCE • Exercise 1: Comprehension (10 marks) • Exercise 2: True or False with Justification (6 marks) • Exercise 3: Vocabulary (4 marks) • Exercise 4: Reference and Interpretation (5 marks)",
+      section_order: 2,
+      max_marks: 25,
+    },
+    {
+      id: SEC_WRITING_ID,
+      exam_id: INITIAL_B1_EXAM_ID,
+      title: "Part Three: Writing",
+      description:
+        "Choose ONE topic and write an essay of 180–220 words (25 marks).",
+      section_order: 3,
+      max_marks: 25,
+    },
+    {
+      id: SEC_BONUS_ID,
+      exam_id: INITIAL_B1_EXAM_ID,
+      title: "Bonus Question",
+      description:
+        "Words for the Teacher: Identify and explain two central words from the reading passage (2 marks).",
+      section_order: 4,
+      max_marks: 2,
+    },
+  ];
+
+  // 5. All Questions for B1 – FINAL ENGLISH EXAMINATION
+  const questions: QuestionRecord[] = [
+    // ========================================================================
+    // PART ONE — GRAMMAR (50 MARKS)
+    // Exercise 1: Multiple Choice (10 marks — 1 mark each)
+    // ========================================================================
+    {
+      id: "q-gram-mc-1",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 1: Multiple Choice (10 marks)",
+      exercise_instructions: "One mark each. Select the single best option.",
+      question_type: "single_choice",
+      question_text:
+        "1. By the time the rescue team arrived, the villagers ______ their homes.",
+      options: [
+        "a) have already left",
+        "b) had already left",
+        "c) already leave",
+        "d) were already leaving",
+      ],
+      correct_answers: ["b) had already left"],
+      accepted_answers: ["b", "b) had already left", "had already left"],
+      marks: 1,
+      question_order: 1,
+      grading_method: "auto",
+    },
+    {
+      id: "q-gram-mc-2",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 1: Multiple Choice (10 marks)",
+      exercise_instructions: "One mark each. Select the single best option.",
+      question_type: "single_choice",
+      question_text:
+        "2. If she had accepted the scholarship, she ______ abroad now.",
+      options: [
+        "a) would study",
+        "b) will study",
+        "c) would be studying",
+        "d) had studied",
+      ],
+      correct_answers: ["c) would be studying"],
+      accepted_answers: ["c", "c) would be studying", "would be studying"],
+      marks: 1,
+      question_order: 2,
+      grading_method: "auto",
+    },
+    {
+      id: "q-gram-mc-3",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 1: Multiple Choice (10 marks)",
+      exercise_instructions: "One mark each. Select the single best option.",
+      question_type: "single_choice",
+      question_text:
+        "3. Despite ______ exhausted, he continued working on his research.",
+      options: ["a) he was", "b) being", "c) was", "d) to be"],
+      correct_answers: ["b) being"],
+      accepted_answers: ["b", "b) being", "being"],
+      marks: 1,
+      question_order: 3,
+      grading_method: "auto",
+    },
+    {
+      id: "q-gram-mc-4",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 1: Multiple Choice (10 marks)",
+      exercise_instructions: "One mark each. Select the single best option.",
+      question_type: "single_choice",
+      question_text:
+        "4. The professor asked me where ______ the previous evening.",
+      options: [
+        "a) did I go",
+        "b) I had gone",
+        "c) have I gone",
+        "d) I go",
+      ],
+      correct_answers: ["b) I had gone"],
+      accepted_answers: ["b", "b) I had gone", "I had gone"],
+      marks: 1,
+      question_order: 4,
+      grading_method: "auto",
+    },
+    {
+      id: "q-gram-mc-5",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 1: Multiple Choice (10 marks)",
+      exercise_instructions: "One mark each. Select the single best option.",
+      question_type: "single_choice",
+      question_text:
+        "5. I ______ this novel for three weeks, but I haven't finished it yet.",
+      options: [
+        "a) read",
+        "b) have been reading",
+        "c) had read",
+        "d) am reading",
+      ],
+      correct_answers: ["b) have been reading"],
+      accepted_answers: [
+        "b",
+        "b) have been reading",
+        "have been reading",
+      ],
+      marks: 1,
+      question_order: 5,
+      grading_method: "auto",
+    },
+    {
+      id: "q-gram-mc-6",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 1: Multiple Choice (10 marks)",
+      exercise_instructions: "One mark each. Select the single best option.",
+      question_type: "single_choice",
+      question_text: "6. Look at those dark clouds! It ______.",
+      options: [
+        "a) will rain",
+        "b) rains",
+        "c) is going to rain",
+        "d) would rain",
+      ],
+      correct_answers: ["c) is going to rain"],
+      accepted_answers: ["c", "c) is going to rain", "is going to rain"],
+      marks: 1,
+      question_order: 6,
+      grading_method: "auto",
+    },
+    {
+      id: "q-gram-mc-7",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 1: Multiple Choice (10 marks)",
+      exercise_instructions: "One mark each. Select the single best option.",
+      question_type: "single_choice",
+      question_text:
+        "7. You ______ have informed the authorities earlier. It was your responsibility.",
+      options: ["a) should", "b) can", "c) might", "d) would"],
+      correct_answers: ["a) should"],
+      accepted_answers: ["a", "a) should", "should"],
+      marks: 1,
+      question_order: 7,
+      grading_method: "auto",
+    },
+    {
+      id: "q-gram-mc-8",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 1: Multiple Choice (10 marks)",
+      exercise_instructions: "One mark each. Select the single best option.",
+      question_type: "single_choice",
+      question_text: "8. She regrets ______ so much time on social media.",
+      options: ["a) to spend", "b) spend", "c) spending", "d) spent"],
+      correct_answers: ["c) spending"],
+      accepted_answers: ["c", "c) spending", "spending"],
+      marks: 1,
+      question_order: 8,
+      grading_method: "auto",
+    },
+    {
+      id: "q-gram-mc-9",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 1: Multiple Choice (10 marks)",
+      exercise_instructions: "One mark each. Select the single best option.",
+      question_type: "single_choice",
+      question_text:
+        "9. The new research centre ______ by the university next year.",
+      options: [
+        "a) will establish",
+        "b) will be established",
+        "c) has established",
+        "d) establishes",
+      ],
+      correct_answers: ["b) will be established"],
+      accepted_answers: [
+        "b",
+        "b) will be established",
+        "will be established",
+      ],
+      marks: 1,
+      question_order: 9,
+      grading_method: "auto",
+    },
+    {
+      id: "q-gram-mc-10",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 1: Multiple Choice (10 marks)",
+      exercise_instructions: "One mark each. Select the single best option.",
+      question_type: "single_choice",
+      question_text:
+        "10. The woman ______ discovery changed modern medicine is a famous scientist.",
+      options: ["a) who", "b) which", "c) whose", "d) whom"],
+      correct_answers: ["c) whose"],
+      accepted_answers: ["c", "c) whose", "whose"],
+      marks: 1,
+      question_order: 10,
+      grading_method: "auto",
+    },
+
+    // ========================================================================
+    // Exercise 2: Sentence Transformation (20 marks — 10 questions, 2 marks each)
+    // ========================================================================
+    {
+      id: "q-gram-st-1",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 2: Sentence Transformation (20 marks)",
+      exercise_instructions:
+        "Ten questions, two marks each. Rewrite the following sentences without changing their original meaning. Use the given keyword without changing it.",
+      question_type: "sentence_transformation",
+      question_text:
+        "1. Although he was seriously ill, he attended the examination.",
+      prompt_keyword: "DESPITE",
+      options: [],
+      correct_answers: [
+        "Despite being seriously ill, he attended the examination.",
+      ],
+      accepted_answers: [
+        "Despite being seriously ill, he attended the examination",
+        "Despite his serious illness, he attended the examination",
+        "Despite the fact that he was seriously ill, he attended the examination",
+        "He attended the examination despite being seriously ill",
+        "He attended the examination despite his serious illness",
+        "He attended the examination despite the fact that he was seriously ill",
+      ],
+      marks: 2,
+      question_order: 11,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-gram-st-2",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 2: Sentence Transformation (20 marks)",
+      exercise_instructions:
+        "Ten questions, two marks each. Rewrite the following sentences without changing their original meaning. Use the given keyword without changing it.",
+      question_type: "sentence_transformation",
+      question_text: "2. Someone has stolen the researcher's laptop.",
+      prompt_keyword: "BEEN",
+      options: [],
+      correct_answers: ["The researcher's laptop has been stolen."],
+      accepted_answers: [
+        "The researcher's laptop has been stolen",
+        "The laptop of the researcher has been stolen",
+      ],
+      marks: 2,
+      question_order: 12,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-gram-st-3",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 2: Sentence Transformation (20 marks)",
+      exercise_instructions:
+        "Ten questions, two marks each. Rewrite the following sentences without changing their original meaning. Use the given keyword without changing it.",
+      question_type: "sentence_transformation",
+      question_text:
+        '3. "I will submit my assignment tomorrow," Sarah said.',
+      prompt_keyword: "TOLD",
+      options: [],
+      correct_answers: [
+        "Sarah told me that she would submit her assignment the next day.",
+      ],
+      accepted_answers: [
+        "Sarah told me that she would submit her assignment the next day",
+        "Sarah told me she would submit her assignment the next day",
+        "Sarah told me that she would submit her assignment the following day",
+        "Sarah told me she would submit her assignment the following day",
+        "Sarah told us that she would submit her assignment the next day",
+        "Sarah told us she would submit her assignment the following day",
+        "Sarah told the teacher that she would submit her assignment the next day",
+        "Sarah told the teacher she would submit her assignment the following day",
+        "Sarah told him that she would submit her assignment the next day",
+        "Sarah told her that she would submit her assignment the next day",
+      ],
+      marks: 2,
+      question_order: 13,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-gram-st-4",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 2: Sentence Transformation (20 marks)",
+      exercise_instructions:
+        "Ten questions, two marks each. Rewrite the following sentences without changing their original meaning. Use the given keyword without changing it.",
+      question_type: "sentence_transformation",
+      question_text:
+        "4. If you don't revise regularly, you won't improve your performance.",
+      prompt_keyword: "UNLESS",
+      options: [],
+      correct_answers: [
+        "Unless you revise regularly, you won't improve your performance.",
+      ],
+      accepted_answers: [
+        "Unless you revise regularly, you won't improve your performance",
+        "Unless you revise regularly, you will not improve your performance",
+        "You won't improve your performance unless you revise regularly",
+        "You will not improve your performance unless you revise regularly",
+      ],
+      marks: 2,
+      question_order: 14,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-gram-st-5",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 2: Sentence Transformation (20 marks)",
+      exercise_instructions:
+        "Ten questions, two marks each. Rewrite the following sentences without changing their original meaning. Use the given keyword without changing it.",
+      question_type: "sentence_transformation",
+      question_text:
+        "5. It is a pity that I didn't take that opportunity.",
+      prompt_keyword: "WISH",
+      options: [],
+      correct_answers: ["I wish I had taken that opportunity."],
+      accepted_answers: [
+        "I wish I had taken that opportunity",
+        "I wish that I had taken that opportunity",
+      ],
+      marks: 2,
+      question_order: 15,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-gram-st-6",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 2: Sentence Transformation (20 marks)",
+      exercise_instructions:
+        "Ten questions, two marks each. Rewrite the following sentences without changing their original meaning. Use the given keyword without changing it.",
+      question_type: "sentence_transformation",
+      question_text:
+        "6. The last time I visited London was three years ago.",
+      prompt_keyword: "FOR",
+      options: [],
+      correct_answers: ["I haven't visited London for three years."],
+      accepted_answers: [
+        "I haven't visited London for three years",
+        "I have not visited London for three years",
+        "I haven't been to London for three years",
+        "I have not been to London for three years",
+      ],
+      marks: 2,
+      question_order: 16,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-gram-st-7",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 2: Sentence Transformation (20 marks)",
+      exercise_instructions:
+        "Ten questions, two marks each. Rewrite the following sentences without changing their original meaning. Use the given keyword without changing it.",
+      question_type: "sentence_transformation",
+      question_text:
+        "7. The teacher expects the students to complete the project by Friday.",
+      prompt_keyword: "ARE",
+      options: [],
+      correct_answers: [
+        "The students are expected to complete the project by Friday.",
+      ],
+      accepted_answers: [
+        "The students are expected to complete the project by Friday",
+        "The students are expected by the teacher to complete the project by Friday",
+      ],
+      marks: 2,
+      question_order: 17,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-gram-st-8",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 2: Sentence Transformation (20 marks)",
+      exercise_instructions:
+        "Ten questions, two marks each. Rewrite the following sentences without changing their original meaning. Use the given keyword without changing it.",
+      question_type: "sentence_transformation",
+      question_text:
+        "8. The woman is a famous scientist. Her discovery changed modern medicine.",
+      prompt_keyword: "WHOSE",
+      options: [],
+      correct_answers: [
+        "The woman whose discovery changed modern medicine is a famous scientist.",
+      ],
+      accepted_answers: [
+        "The woman whose discovery changed modern medicine is a famous scientist",
+        "The woman, whose discovery changed modern medicine, is a famous scientist",
+      ],
+      marks: 2,
+      question_order: 18,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-gram-st-9",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 2: Sentence Transformation (20 marks)",
+      exercise_instructions:
+        "Ten questions, two marks each. Rewrite the following sentences without changing their original meaning. Use the given keyword without changing it.",
+      question_type: "sentence_transformation",
+      question_text:
+        "9. You should consult a specialist before making such an important decision.",
+      prompt_keyword: "OUGHT",
+      options: [],
+      correct_answers: [
+        "You ought to consult a specialist before making such an important decision.",
+      ],
+      accepted_answers: [
+        "You ought to consult a specialist before making such an important decision",
+      ],
+      marks: 2,
+      question_order: 19,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-gram-st-10",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 2: Sentence Transformation (20 marks)",
+      exercise_instructions:
+        "Ten questions, two marks each. Rewrite the following sentences without changing their original meaning. Use the given keyword without changing it.",
+      question_type: "sentence_transformation",
+      question_text:
+        "10. The train will leave before we arrive at the station.",
+      prompt_keyword: "BY",
+      options: [],
+      correct_answers: [
+        "By the time we arrive at the station, the train will have left.",
+      ],
+      accepted_answers: [
+        "By the time we arrive at the station, the train will have left",
+        "The train will have left by the time we arrive at the station",
+      ],
+      marks: 2,
+      question_order: 20,
+      grading_method: "hybrid",
+    },
+
+    // ========================================================================
+    // Exercise 3: Error Correction (10 marks — 10 questions, 1 mark each)
+    // ========================================================================
+    {
+      id: "q-gram-ec-1",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 3: Error Correction (10 marks)",
+      exercise_instructions:
+        "Each sentence contains one grammatical mistake. Rewrite the complete corrected sentence. One mark each.",
+      question_type: "error_correction",
+      question_text:
+        "1. If I would have known about the meeting, I would have attended it.",
+      options: [],
+      correct_answers: [
+        "If I had known about the meeting, I would have attended it.",
+      ],
+      accepted_answers: [
+        "If I had known about the meeting, I would have attended it",
+        "Had I known about the meeting, I would have attended it",
+      ],
+      marks: 1,
+      question_order: 21,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-gram-ec-2",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 3: Error Correction (10 marks)",
+      exercise_instructions:
+        "Each sentence contains one grammatical mistake. Rewrite the complete corrected sentence. One mark each.",
+      question_type: "error_correction",
+      question_text: "2. She suggested to organise another meeting.",
+      options: [],
+      correct_answers: ["She suggested organising another meeting."],
+      accepted_answers: [
+        "She suggested organising another meeting",
+        "She suggested organizing another meeting",
+        "She suggested that we organise another meeting",
+        "She suggested that we organize another meeting",
+        "She suggested that they organise another meeting",
+        "She suggested that they organize another meeting",
+      ],
+      marks: 1,
+      question_order: 22,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-gram-ec-3",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 3: Error Correction (10 marks)",
+      exercise_instructions:
+        "Each sentence contains one grammatical mistake. Rewrite the complete corrected sentence. One mark each.",
+      question_type: "error_correction",
+      question_text: "3. The building has been construct recently.",
+      options: [],
+      correct_answers: ["The building has been constructed recently."],
+      accepted_answers: [
+        "The building has been constructed recently",
+        "The building was constructed recently",
+      ],
+      marks: 1,
+      question_order: 23,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-gram-ec-4",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 3: Error Correction (10 marks)",
+      exercise_instructions:
+        "Each sentence contains one grammatical mistake. Rewrite the complete corrected sentence. One mark each.",
+      question_type: "error_correction",
+      question_text: "4. He asked me where did I buy that dictionary.",
+      options: [],
+      correct_answers: ["He asked me where I had bought that dictionary."],
+      accepted_answers: [
+        "He asked me where I had bought that dictionary",
+        "He asked me where I bought that dictionary",
+      ],
+      marks: 1,
+      question_order: 24,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-gram-ec-5",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 3: Error Correction (10 marks)",
+      exercise_instructions:
+        "Each sentence contains one grammatical mistake. Rewrite the complete corrected sentence. One mark each.",
+      question_type: "error_correction",
+      question_text:
+        "5. In spite of she was disappointed, she remained polite.",
+      options: [],
+      correct_answers: [
+        "In spite of being disappointed, she remained polite.",
+      ],
+      accepted_answers: [
+        "In spite of being disappointed, she remained polite",
+        "In spite of her disappointment, she remained polite",
+        "In spite of the fact that she was disappointed, she remained polite",
+        "Although she was disappointed, she remained polite",
+      ],
+      marks: 1,
+      question_order: 25,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-gram-ec-6",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 3: Error Correction (10 marks)",
+      exercise_instructions:
+        "Each sentence contains one grammatical mistake. Rewrite the complete corrected sentence. One mark each.",
+      question_type: "error_correction",
+      question_text: "6. I have visited Paris last summer.",
+      options: [],
+      correct_answers: ["I visited Paris last summer."],
+      accepted_answers: ["I visited Paris last summer"],
+      marks: 1,
+      question_order: 26,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-gram-ec-7",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 3: Error Correction (10 marks)",
+      exercise_instructions:
+        "Each sentence contains one grammatical mistake. Rewrite the complete corrected sentence. One mark each.",
+      question_type: "error_correction",
+      question_text:
+        "7. The students which passed the examination received certificates.",
+      options: [],
+      correct_answers: [
+        "The students who passed the examination received certificates.",
+      ],
+      accepted_answers: [
+        "The students who passed the examination received certificates",
+        "The students that passed the examination received certificates",
+      ],
+      marks: 1,
+      question_order: 27,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-gram-ec-8",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 3: Error Correction (10 marks)",
+      exercise_instructions:
+        "Each sentence contains one grammatical mistake. Rewrite the complete corrected sentence. One mark each.",
+      question_type: "error_correction",
+      question_text:
+        "8. You mustn't have forgotten to lock the door yesterday.",
+      options: [],
+      correct_answers: [
+        "You can't have forgotten to lock the door yesterday.",
+      ],
+      accepted_answers: [
+        "You can't have forgotten to lock the door yesterday",
+        "You cannot have forgotten to lock the door yesterday",
+        "You shouldn't have forgotten to lock the door yesterday",
+        "You should not have forgotten to lock the door yesterday",
+      ],
+      marks: 1,
+      question_order: 28,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-gram-ec-9",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 3: Error Correction (10 marks)",
+      exercise_instructions:
+        "Each sentence contains one grammatical mistake. Rewrite the complete corrected sentence. One mark each.",
+      question_type: "error_correction",
+      question_text:
+        "9. By next December, she will complete her university degree.",
+      options: [],
+      correct_answers: [
+        "By next December, she will have completed her university degree.",
+      ],
+      accepted_answers: [
+        "By next December, she will have completed her university degree",
+      ],
+      marks: 1,
+      question_order: 29,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-gram-ec-10",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 3: Error Correction (10 marks)",
+      exercise_instructions:
+        "Each sentence contains one grammatical mistake. Rewrite the complete corrected sentence. One mark each.",
+      question_type: "error_correction",
+      question_text:
+        "10. I wish I know the answer to this complicated question.",
+      options: [],
+      correct_answers: [
+        "I wish I knew the answer to this complicated question.",
+      ],
+      accepted_answers: [
+        "I wish I knew the answer to this complicated question",
+      ],
+      marks: 1,
+      question_order: 30,
+      grading_method: "hybrid",
+    },
+
+    // ========================================================================
+    // Exercise 4: Complete the Sentences (10 marks — 10 questions, 1 mark each)
+    // ========================================================================
+    {
+      id: "q-gram-gap-1",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 4: Complete the Sentences (10 marks)",
+      exercise_instructions:
+        "Use the correct form of the verbs in brackets. One mark each.",
+      question_type: "fill_in_the_gap",
+      question_text:
+        "1. By the time the lecture started, most students ______ already ______ (arrive).",
+      prompt_keyword: "arrive",
+      options: [],
+      correct_answers: ["had already arrived"],
+      accepted_answers: [
+        "had already arrived",
+        "had / arrived",
+        "had, arrived",
+        "had arrived",
+      ],
+      marks: 1,
+      question_order: 31,
+      grading_method: "auto",
+    },
+    {
+      id: "q-gram-gap-2",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 4: Complete the Sentences (10 marks)",
+      exercise_instructions:
+        "Use the correct form of the verbs in brackets. One mark each.",
+      question_type: "fill_in_the_gap",
+      question_text:
+        "2. If he ______ (study) harder, he would have passed the examination.",
+      prompt_keyword: "study",
+      options: [],
+      correct_answers: ["had studied"],
+      accepted_answers: ["had studied"],
+      marks: 1,
+      question_order: 32,
+      grading_method: "auto",
+    },
+    {
+      id: "q-gram-gap-3",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 4: Complete the Sentences (10 marks)",
+      exercise_instructions:
+        "Use the correct form of the verbs in brackets. One mark each.",
+      question_type: "fill_in_the_gap",
+      question_text:
+        "3. The documents ______ (sign) by the director before the deadline.",
+      prompt_keyword: "sign",
+      options: [],
+      correct_answers: ["were signed"],
+      accepted_answers: [
+        "were signed",
+        "had been signed",
+        "will be signed",
+        "will have been signed",
+        "must be signed",
+      ],
+      marks: 1,
+      question_order: 33,
+      grading_method: "auto",
+    },
+    {
+      id: "q-gram-gap-4",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 4: Complete the Sentences (10 marks)",
+      exercise_instructions:
+        "Use the correct form of the verbs in brackets. One mark each.",
+      question_type: "fill_in_the_gap",
+      question_text: "4. She denied ______ (take) the money from the office.",
+      prompt_keyword: "take",
+      options: [],
+      correct_answers: ["taking"],
+      accepted_answers: ["taking", "having taken"],
+      marks: 1,
+      question_order: 34,
+      grading_method: "auto",
+    },
+    {
+      id: "q-gram-gap-5",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 4: Complete the Sentences (10 marks)",
+      exercise_instructions:
+        "Use the correct form of the verbs in brackets. One mark each.",
+      question_type: "fill_in_the_gap",
+      question_text:
+        "5. I wish I ______ (not / waste) so much time yesterday.",
+      prompt_keyword: "not / waste",
+      options: [],
+      correct_answers: ["had not wasted"],
+      accepted_answers: ["had not wasted", "hadn't wasted"],
+      marks: 1,
+      question_order: 35,
+      grading_method: "auto",
+    },
+    {
+      id: "q-gram-gap-6",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 4: Complete the Sentences (10 marks)",
+      exercise_instructions:
+        "Use the correct form of the verbs in brackets. One mark each.",
+      question_type: "fill_in_the_gap",
+      question_text:
+        "6. Unless you ______ (provide) sufficient evidence, your argument will remain weak.",
+      prompt_keyword: "provide",
+      options: [],
+      correct_answers: ["provide"],
+      accepted_answers: ["provide"],
+      marks: 1,
+      question_order: 36,
+      grading_method: "auto",
+    },
+    {
+      id: "q-gram-gap-7",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 4: Complete the Sentences (10 marks)",
+      exercise_instructions:
+        "Use the correct form of the verbs in brackets. One mark each.",
+      question_type: "fill_in_the_gap",
+      question_text: "7. They ______ (work) on this project since January.",
+      prompt_keyword: "work",
+      options: [],
+      correct_answers: ["have been working"],
+      accepted_answers: ["have been working", "have worked"],
+      marks: 1,
+      question_order: 37,
+      grading_method: "auto",
+    },
+    {
+      id: "q-gram-gap-8",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 4: Complete the Sentences (10 marks)",
+      exercise_instructions:
+        "Use the correct form of the verbs in brackets. One mark each.",
+      question_type: "fill_in_the_gap",
+      question_text:
+        "8. The manager promised that he ______ (contact) us the following day.",
+      prompt_keyword: "contact",
+      options: [],
+      correct_answers: ["would contact"],
+      accepted_answers: ["would contact"],
+      marks: 1,
+      question_order: 38,
+      grading_method: "auto",
+    },
+    {
+      id: "q-gram-gap-9",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 4: Complete the Sentences (10 marks)",
+      exercise_instructions:
+        "Use the correct form of the verbs in brackets. One mark each.",
+      question_type: "fill_in_the_gap",
+      question_text:
+        "9. The woman ______ (live) next door is a university professor.",
+      prompt_keyword: "live",
+      options: [],
+      correct_answers: ["living"],
+      accepted_answers: ["living", "who lives"],
+      marks: 1,
+      question_order: 39,
+      grading_method: "auto",
+    },
+    {
+      id: "q-gram-gap-10",
+      section_id: SEC_GRAMMAR_ID,
+      exercise_title: "Exercise 4: Complete the Sentences (10 marks)",
+      exercise_instructions:
+        "Use the correct form of the verbs in brackets. One mark each.",
+      question_type: "fill_in_the_gap",
+      question_text:
+        "10. You ______ (not / use) your phone during the examination. It is strictly prohibited.",
+      prompt_keyword: "not / use",
+      options: [],
+      correct_answers: ["must not use"],
+      accepted_answers: [
+        "must not use",
+        "mustn't use",
+        "cannot use",
+        "can't use",
+        "are not allowed to use",
+        "may not use",
+      ],
+      marks: 1,
+      question_order: 40,
+      grading_method: "auto",
+    },
+
+    // ========================================================================
+    // PART TWO — READING COMPREHENSION (25 MARKS)
+    // Reading Exercise 1: Comprehension (10 marks — 5 questions, 2 marks each)
+    // ========================================================================
+    {
+      id: "q-read-comp-1",
+      section_id: SEC_READING_ID,
+      exercise_title: "Reading Exercise 1: Comprehension (10 marks)",
+      exercise_instructions:
+        'Answer the following questions based on the passage "THE PRICE OF CONVENIENCE". Two marks each.',
+      question_type: "reading_comprehension",
+      question_text:
+        "1. What is the main contradiction presented in the passage concerning modern communication? (2 marks)",
+      options: [],
+      correct_answers: [
+        "Although society is more connected than ever through digital communication, people may experience increasing feelings of isolation and struggle to maintain deep conversations in real life.",
+      ],
+      accepted_answers: [
+        "connected",
+        "isolation",
+        "face-to-face",
+        "deep conversations",
+        "lonely",
+        "isolated",
+      ],
+      marks: 2,
+      question_order: 1,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-read-comp-2",
+      section_id: SEC_READING_ID,
+      exercise_title: "Reading Exercise 1: Comprehension (10 marks)",
+      exercise_instructions:
+        'Answer the following questions based on the passage "THE PRICE OF CONVENIENCE". Two marks each.',
+      question_type: "reading_comprehension",
+      question_text:
+        "2. Why does having immediate access to information not necessarily guarantee genuine knowledge? (2 marks)",
+      options: [],
+      correct_answers: [
+        "Because immediate accessibility encourages some individuals to accept information without questioning its accuracy or engaging in patience, extensive reading, and independent investigation.",
+      ],
+      accepted_answers: [
+        "without questioning",
+        "accuracy",
+        "accept information",
+        "independent investigation",
+        "patience",
+      ],
+      marks: 2,
+      question_order: 2,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-read-comp-3",
+      section_id: SEC_READING_ID,
+      exercise_title: "Reading Exercise 1: Comprehension (10 marks)",
+      exercise_instructions:
+        'Answer the following questions based on the passage "THE PRICE OF CONVENIENCE". Two marks each.',
+      question_type: "reading_comprehension",
+      question_text:
+        "3. How might excessive dependence on artificial intelligence affect human intellectual abilities? (2 marks)",
+      options: [],
+      correct_answers: [
+        "Excessive reliance on artificial intelligence may weaken certain intellectual skills if individuals stop practising independent thinking and use technology as a substitute for human judgement.",
+      ],
+      accepted_answers: [
+        "weaken",
+        "intellectual skills",
+        "independent thinking",
+        "substitute for human judgement",
+      ],
+      marks: 2,
+      question_order: 3,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-read-comp-4",
+      section_id: SEC_READING_ID,
+      exercise_title: "Reading Exercise 1: Comprehension (10 marks)",
+      exercise_instructions:
+        'Answer the following questions based on the passage "THE PRICE OF CONVENIENCE". Two marks each.',
+      question_type: "reading_comprehension",
+      question_text:
+        "4. What does the writer suggest should determine the value of technological progress? (2 marks)",
+      options: [],
+      correct_answers: [
+        "Technological progress should be measured by how responsibly individuals use it and by the quality of human thinking, relationships, and decisions, not merely by speed.",
+      ],
+      accepted_answers: [
+        "responsibly",
+        "quality of human thinking",
+        "relationships",
+        "decisions",
+      ],
+      marks: 2,
+      question_order: 4,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-read-comp-5",
+      section_id: SEC_READING_ID,
+      exercise_title: "Reading Exercise 1: Comprehension (10 marks)",
+      exercise_instructions:
+        'Answer the following questions based on the passage "THE PRICE OF CONVENIENCE". Two marks each.',
+      question_type: "reading_comprehension",
+      question_text:
+        "5. Suggest an appropriate alternative title for the passage. (2 marks)",
+      options: [],
+      correct_answers: [
+        "Technology and Humanity: Balancing Convenience and Independent Thought",
+      ],
+      accepted_answers: [
+        "technology",
+        "convenience",
+        "humanity",
+        "modern",
+        "digital",
+        "dependence",
+        "cost",
+        "consequences",
+      ],
+      marks: 2,
+      question_order: 5,
+      grading_method: "hybrid",
+    },
+
+    // ========================================================================
+    // Reading Exercise 2: True or False (6 marks — 3 questions, 2 marks each)
+    // ========================================================================
+    {
+      id: "q-read-tf-1",
+      section_id: SEC_READING_ID,
+      exercise_title: "Reading Exercise 2: True or False (6 marks)",
+      exercise_instructions:
+        "Select True or False and justify your answers using information from the passage. (2 marks each: 1 mark for True/False, 1 mark for justification).",
+      question_type: "true_false",
+      question_text:
+        "1. Modern technology has made access to education and information more difficult.",
+      options: ["True", "False"],
+      correct_answers: ["False"],
+      accepted_answers: [
+        "immediately available",
+        "accessibility has made education more inclusive",
+        "more inclusive",
+        "search engines",
+      ],
+      marks: 2,
+      question_order: 6,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-read-tf-2",
+      section_id: SEC_READING_ID,
+      exercise_title: "Reading Exercise 2: True or False (6 marks)",
+      exercise_instructions:
+        "Select True or False and justify your answers using information from the passage. (2 marks each: 1 mark for True/False, 1 mark for justification).",
+      question_type: "true_false",
+      question_text:
+        "2. The writer believes that digital communication always strengthens personal relationships.",
+      options: ["True", "False"],
+      correct_answers: ["False"],
+      accepted_answers: [
+        "replaces meaningful face-to-face interaction",
+        "struggling to maintain deep conversations",
+        "feelings of isolation",
+        "isolation",
+      ],
+      marks: 2,
+      question_order: 7,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-read-tf-3",
+      section_id: SEC_READING_ID,
+      exercise_title: "Reading Exercise 2: True or False (6 marks)",
+      exercise_instructions:
+        "Select True or False and justify your answers using information from the passage. (2 marks each: 1 mark for True/False, 1 mark for justification).",
+      question_type: "true_false",
+      question_text:
+        "3. The writer considers technology a tool that should support rather than replace human judgement.",
+      options: ["True", "False"],
+      correct_answers: ["True"],
+      accepted_answers: [
+        "substitute for human judgement",
+        "tool that supports their abilities",
+        "supports their abilities",
+      ],
+      marks: 2,
+      question_order: 8,
+      grading_method: "hybrid",
+    },
+
+    // ========================================================================
+    // Reading Exercise 3: Vocabulary (4 marks — 4 questions, 1 mark each)
+    // ========================================================================
+    {
+      id: "q-read-voc-1",
+      section_id: SEC_READING_ID,
+      exercise_title: "Reading Exercise 3: Vocabulary (4 marks)",
+      exercise_instructions:
+        "Find words or expressions in the passage that mean the following. One mark each.",
+      question_type: "short_text",
+      question_text:
+        "1. Made something possible to use or obtain more easily. (Paragraph 2)",
+      options: [],
+      correct_answers: ["accessibility"],
+      accepted_answers: [
+        "accessibility",
+        "inclusive",
+        "immediately available",
+      ],
+      marks: 1,
+      question_order: 9,
+      grading_method: "auto",
+    },
+    {
+      id: "q-read-voc-2",
+      section_id: SEC_READING_ID,
+      exercise_title: "Reading Exercise 3: Vocabulary (4 marks)",
+      exercise_instructions:
+        "Find words or expressions in the passage that mean the following. One mark each.",
+      question_type: "short_text",
+      question_text:
+        "2. The ability to make decisions based on careful thought. (Paragraph 3 / 4)",
+      options: [],
+      correct_answers: ["judgement"],
+      accepted_answers: [
+        "judgement",
+        "judgment",
+        "human judgement",
+        "independent thinking",
+      ],
+      marks: 1,
+      question_order: 10,
+      grading_method: "auto",
+    },
+    {
+      id: "q-read-voc-3",
+      section_id: SEC_READING_ID,
+      exercise_title: "Reading Exercise 3: Vocabulary (4 marks)",
+      exercise_instructions:
+        "Find words or expressions in the passage that mean the following. One mark each.",
+      question_type: "short_text",
+      question_text:
+        "3. Depending too much on someone or something. (Paragraph 4)",
+      options: [],
+      correct_answers: ["excessive reliance"],
+      accepted_answers: [
+        "excessive reliance",
+        "reliance",
+        "dependence",
+        "growing dependence",
+      ],
+      marks: 1,
+      question_order: 11,
+      grading_method: "auto",
+    },
+    {
+      id: "q-read-voc-4",
+      section_id: SEC_READING_ID,
+      exercise_title: "Reading Exercise 3: Vocabulary (4 marks)",
+      exercise_instructions:
+        "Find words or expressions in the passage that mean the following. One mark each.",
+      question_type: "short_text",
+      question_text:
+        "4. The act of keeping something safe or maintaining it. (Paragraph 5)",
+      options: [],
+      correct_answers: ["preserve"],
+      accepted_answers: ["preserve", "to preserve"],
+      marks: 1,
+      question_order: 12,
+      grading_method: "auto",
+    },
+
+    // ========================================================================
+    // Reading Exercise 4: Reference and Interpretation (5 marks)
+    // ========================================================================
+    {
+      id: "q-read-ref-1",
+      section_id: SEC_READING_ID,
+      exercise_title:
+        "Reading Exercise 4: Reference and Interpretation (5 marks)",
+      exercise_instructions:
+        "Answer the reference and interpretation questions carefully.",
+      question_type: "reading_comprehension",
+      question_text:
+        '1. What does "these developments" in paragraph 1 refer to? (2 marks)',
+      options: [],
+      correct_answers: [
+        "Online shopping, instant communication, artificial intelligence, and automated services.",
+      ],
+      accepted_answers: [
+        "online shopping",
+        "instant communication",
+        "artificial intelligence",
+        "automated services",
+        "technology",
+      ],
+      marks: 2,
+      question_order: 13,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-read-ref-2",
+      section_id: SEC_READING_ID,
+      exercise_title:
+        "Reading Exercise 4: Reference and Interpretation (5 marks)",
+      exercise_instructions:
+        "Answer the reference and interpretation questions carefully.",
+      question_type: "reading_comprehension",
+      question_text: '2. What does "them" in paragraph 4 refer to? (1 mark)',
+      options: [],
+      correct_answers: ["Artificial intelligence systems (these systems)."],
+      accepted_answers: [
+        "artificial intelligence",
+        "these systems",
+        "ai",
+        "systems",
+      ],
+      marks: 1,
+      question_order: 14,
+      grading_method: "hybrid",
+    },
+    {
+      id: "q-read-ref-3",
+      section_id: SEC_READING_ID,
+      exercise_title:
+        "Reading Exercise 4: Reference and Interpretation (5 marks)",
+      exercise_instructions:
+        "Answer the reference and interpretation questions carefully.",
+      question_type: "reading_comprehension",
+      question_text:
+        "3. Explain the meaning of the final sentence in your own words. (2 marks)",
+      options: [],
+      correct_answers: [
+        "Instead of only asking what technology can achieve for us, we must ask how we can protect our essential human qualities, relationships, and independent thought while using technology.",
+      ],
+      accepted_answers: [
+        "humanity",
+        "protect",
+        "preserve",
+        "thinking",
+        "relationships",
+        "human qualities",
+        "values",
+      ],
+      marks: 2,
+      question_order: 15,
+      grading_method: "hybrid",
+    },
+
+    // ========================================================================
+    // PART THREE — WRITING (25 MARKS)
+    // ========================================================================
+    {
+      id: "q-writing-essay",
+      section_id: SEC_WRITING_ID,
+      exercise_title: "Part Three: Essay Writing (25 marks)",
+      exercise_instructions:
+        "Students must choose ONE topic. Word limit: 180–220 words.",
+      question_type: "essay",
+      question_text:
+        "Select ONE of the two topics below and write your essay (180–220 words).",
+      options: [
+        "Topic 1: Technology and Human Intelligence — Some people believe that modern technology makes individuals more intelligent, while others argue that it makes them intellectually dependent. Write an argumentative essay discussing both perspectives and expressing your own opinion.",
+        "Topic 2: A Decision That Changed Everything — Imagine that you had been given an important opportunity in your life but failed to take advantage of it. Write a reflective essay explaining: What the opportunity was • Why you did not take it • What the consequences were • What you wish you had done differently • What you learned from the experience.",
+      ],
+      correct_answers: [],
+      accepted_answers: [],
+      marks: 25,
+      question_order: 1,
+      grading_method: "manual",
+    },
+
+    // ========================================================================
+    // BONUS QUESTION — 2 MARKS
+    // ========================================================================
+    {
+      id: "q-bonus-words",
+      section_id: SEC_BONUS_ID,
+      exercise_title: "Bonus Question: Words for the Teacher (2 marks)",
+      exercise_instructions:
+        "Identify two words from the reading passage that you consider particularly important for understanding its central message. Explain each word in your own words. (1 mark per word and explanation).",
+      question_type: "bonus_words",
+      question_text:
+        "Identify two words from the reading passage 'THE PRICE OF CONVENIENCE' that you consider particularly important for understanding its central message. Explain each word in your own words.",
+      options: [],
+      correct_answers: [],
+      accepted_answers: [],
+      marks: 2,
+      question_order: 1,
+      grading_method: "manual",
+    },
+  ];
+
+  return {
+    profiles,
+    students,
+    exams,
+    exam_sections,
+    questions,
+    exam_attempts: [],
+    student_answers: [],
+    writing_submissions: [],
+    grading_records: [],
+    results_publications: [],
+    audit_logs: [
+      {
+        id: "90000000-0000-0000-0000-000000000001",
+        user_id: INITIAL_TEACHER_ID,
+        user_name: "Adam Ameyoud",
+        user_role: "teacher",
+        action: "PLATFORM_INITIALIZED",
+        metadata: {
+          exam: "B1 – FINAL ENGLISH EXAMINATION",
+          seeded_questions: questions.length,
+        },
+        created_at: now,
+      },
+    ],
+  };
+}
